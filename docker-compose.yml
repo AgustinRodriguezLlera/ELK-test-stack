@@ -1,0 +1,58 @@
+version: '2.2'
+services:
+  elasticsearch01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.0.0
+    container_name: elasticsearch01
+    tty: true
+    restart: unless-stopped
+    environment:
+      - node.name=elasticsearch01
+      - cluster.name=local-cluster
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    extra_hosts:
+      - "elasticsearch:172.18.18.10"
+      - "kibana:172.18.18.20"
+    networks:
+      elk_net:
+        ipv4_address: 172.18.18.10
+ 
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.0.0
+    container_name: kibana
+    depends_on:
+      - "elasticsearch01"
+    tty: true
+    restart: unless-stopped
+    ports:
+      - "5601:5601"
+    environment:
+      - SERVER_NAME=kibana.test
+      - ELASTICSEARCH_HOST=http://elasticsearch01
+    extra_hosts:
+      - "elasticsearch:172.18.18.10"
+      - "kibana:172.18.18.20"
+    networks:
+      elk_net:
+        ipv4_address: 172.18.18.20
+ 
+ 
+ 
+networks:
+    elk_net:
+        driver: bridge
+        driver_opts:
+              com.docker.network.enable_ipv6: "false"
+        ipam:
+            driver: default
+            config:
+            - subnet: "172.18.18.0/24"
+              gateway: "172.18.18.1"
