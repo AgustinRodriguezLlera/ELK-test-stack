@@ -1,5 +1,4 @@
 # ELK Test 
--
 
 This compose file creates a Stack with ElasticSearch and Kibana, both in a container each one, for quick testing.
 
