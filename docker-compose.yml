@@ -5,6 +5,8 @@ services:
     container_name: elasticsearch01
     tty: true
     restart: unless-stopped
+    volumes:
+      - "elasticsearch:/usr/share/elasticsearch/data"
     environment:
       - node.name=elasticsearch01
       - cluster.name=local-cluster
@@ -43,8 +45,7 @@ services:
     networks:
       elk_net:
         ipv4_address: 172.18.18.20
- 
- 
+    
  
 networks:
     elk_net:
@@ -56,3 +57,6 @@ networks:
             config:
             - subnet: "172.18.18.0/24"
               gateway: "172.18.18.1"
+
+volumes: 
+  elasticsearch:
